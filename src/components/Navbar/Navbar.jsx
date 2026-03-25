@@ -119,7 +119,7 @@ const renderMobileAuthButton =()=>{
 
 const navLinks = [
     { name: 'Home', to: '/', icon: <FiHome /> },
-    { name: 'Products', to: '/Products', icon: <FiBook /> },
+    { name: 'Products', to: '/products', icon: <FiBook /> },
     { name: 'About', to: '/about', icon: <FiStar /> },
     { name: 'Contact', to: '/contact', icon: <FiPhone /> },
     ...(isAuthenticated ? [
