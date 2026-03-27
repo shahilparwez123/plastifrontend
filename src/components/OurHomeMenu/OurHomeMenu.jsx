@@ -27,31 +27,22 @@ const [menuData, setMenuData] = useState({});
 const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  const fetchMenu = async () => {
-    try {
-      const API_URL = import.meta.env.VITE_BACKEND_URL;
+    const API_URL = import.meta.env.VITE_BACKEND_URL;   // 👈 ADD HERE (inside useEffect, top)
 
-      const res = await axios.get(`${API_URL}/api/items`);
-
-      const grouped = res.data.reduce((acc, item) => {
-        acc[item.category] = acc[item.category] || [];
-        acc[item.category].push(item);
-        return acc;
-      }, {});
-
-      setMenuData(grouped);
-      setLoading(false);
-
-    } catch (err) {
-      console.log("Retrying...", err);
-
-      // 🔥 retry after 2 seconds
-      setTimeout(fetchMenu, 2000);
-    }
-  };
-
-  fetchMenu();
-}, []);
+    axios.get(`${API_URL}/api/items`)  
+    .then(res => {
+        const grouped = res.data.reduce((acc, item) => {
+            acc[item.category] = acc[item.category] || [];
+            acc[item.category].push(item);
+            return acc;
+        }, {})
+        setMenuData(grouped);
+    })
+    .catch(console.error)
+     .finally(() => {
+        setLoading(false);
+    });
+}, [])
 
 //USE ID TO FIND AND UPDATE
 const getCartEntry = id => cartItems.find(ci =>( ci.item?._id|| ci.item) === id);

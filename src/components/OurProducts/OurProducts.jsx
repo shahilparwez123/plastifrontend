@@ -32,30 +32,28 @@ const [menuData, setMenuData] = useState({});
 const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  const fetchMenu = async () => {
-    try {
-      const API_URL = import.meta.env.VITE_BACKEND_URL;
-      const res = await axios.get(`${API_URL}/api/items`);
+    const fetchMenu = async () => {
+        try{
+            const API_URL = import.meta.env.VITE_BACKEND_URL;
+            const res = await axios.get(`${API_URL}/api/items`);
 
-      const byCategory = res.data.reduce((acc, item) => {
-        acc[item.category] = acc[item.category] || [];
-        acc[item.category].push(item);
-        return acc;
-      }, {});
+            const byCategory = res.data.reduce((acc, item) => {
+                acc[item.category] = acc[item.category] || [];
+                acc[item.category].push(item);
+                return acc;
 
-      setMenuData(byCategory);
-      setLoading(false);
-
-    } catch (err) {
-      console.log("Retrying...", err);
-
-      // 🔥 retry after 2 seconds
-      setTimeout(fetchMenu, 2000);
+        },{})
+        setMenuData(byCategory);
     }
-  };
+        catch(err){
+            console.error('Failed to load menu', err);
 
-  fetchMenu();
-}, []);
+        }finally {
+            setLoading(false);
+        }
+    }
+    fetchMenu();
+},[])
 const getCartEntry = id => cartItems.find(ci =>( ci.item?._id|| ci.item) === id);
 const getQuantity = id => getCartEntry(id)?.quantity || 0;
 
