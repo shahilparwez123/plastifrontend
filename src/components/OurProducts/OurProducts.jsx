@@ -32,28 +32,30 @@ const [menuData, setMenuData] = useState({});
 const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-    const fetchMenu = async () => {
-        try{
-            const API_URL = import.meta.env.VITE_BACKEND_URL;
-            const res = await axios.get(`${API_URL}/api/items`);
+  const fetchMenu = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_BACKEND_URL;
+      const res = await axios.get(`${API_URL}/api/items`);
 
-            const byCategory = res.data.reduce((acc, item) => {
-                acc[item.category] = acc[item.category] || [];
-                acc[item.category].push(item);
-                return acc;
+      const byCategory = res.data.reduce((acc, item) => {
+        acc[item.category] = acc[item.category] || [];
+        acc[item.category].push(item);
+        return acc;
+      }, {});
 
-        },{})
-        setMenuData(byCategory);
+      setMenuData(byCategory);
+      setLoading(false);
+
+    } catch (err) {
+      console.log("Retrying...", err);
+
+      // 🔥 retry after 2 seconds
+      setTimeout(fetchMenu, 2000);
     }
-        catch(err){
-            console.error('Failed to load menu', err);
+  };
 
-        }finally {
-            setLoading(false);
-        }
-    }
-    fetchMenu();
-},[])
+  fetchMenu();
+}, []);
 const getCartEntry = id => cartItems.find(ci =>( ci.item?._id|| ci.item) === id);
 const getQuantity = id => getCartEntry(id)?.quantity || 0;
 
@@ -122,11 +124,13 @@ const displayItems = allItems
                             style={{'--index':i}}>
                                 <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10'>
                                 <img 
-                                src={item.imageUrl?.startsWith("http") 
-                                    ? item.imageUrl 
-                                     : `${import.meta.env.VITE_BACKEND_URL}${item.imageUrl}`}
+                                src={item.imageUrl}
                                 alt={item.name}
-                                className=' max-h-full max-w-full object-contain transition-all duration-700'/>
+                                className=' max-h-full max-w-full object-contain transition-all duration-700'
+                                onError={(e) => {
+                                    e.target.src = "https://via.placeholder.com/150";
+                                }}
+                                />
                                 </div>
 
 
