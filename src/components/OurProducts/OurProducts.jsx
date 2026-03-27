@@ -29,6 +29,7 @@ const search = query.get('search');
 
 const {cartItems, addToCart, removeFromCart, updateQuantity} = useCart();
 const [menuData, setMenuData] = useState({});
+const [loading, setLoading] = useState(true);
 
 useEffect(() => {
     const fetchMenu = async () => {
@@ -47,6 +48,8 @@ useEffect(() => {
         catch(err){
             console.error('Failed to load menu', err);
 
+        }finally {
+            setLoading(false);
         }
     }
     fetchMenu();
@@ -65,6 +68,13 @@ const displayItems = allItems
     item.name.toLowerCase().includes(search?.toLowerCase() || '')
   )
   .slice(0, 12);
+  if (loading) {
+  return (
+    <h1 style={{ color: "white", textAlign: "center", marginTop: "100px" }}>
+      Loading products...
+    </h1>
+  );
+}
 
     return (
         <div className=' bg-gradient-to-br from-[#1a120b] via-[#2a1e14] to-[#3e2b1d] min-h-screen py-16
@@ -111,7 +121,11 @@ const displayItems = allItems
                             border-amber-800/30 backdrop-blur-sm flex flex-col transition-all duration-500 w-full '
                             style={{'--index':i}}>
                                 <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10'>
-                                <img src={item.imageUrl || item.image} alt={item.name}
+                                <img 
+                                src={item.imageUrl?.startsWith("http") 
+                                    ? item.imageUrl 
+                                     : `${import.meta.env.VITE_BACKEND_URL}${item.imageUrl}`}
+                                alt={item.name}
                                 className=' max-h-full max-w-full object-contain transition-all duration-700'/>
                                 </div>
 

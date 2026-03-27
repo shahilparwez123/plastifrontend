@@ -24,9 +24,12 @@ const OurHomeMenu = ()=> {
 const {cartItems, addToCart, removeFromCart, updateQuantity} = useCart();
 console.log(cartItems);
 const [menuData, setMenuData] = useState({});
+const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-    axios.get('https://plastibackend.onrender.com/api/items')
+    const API_URL = import.meta.env.VITE_BACKEND_URL;   // 👈 ADD HERE (inside useEffect, top)
+
+    axios.get(`${API_URL}/api/items`)  
     .then(res => {
         const grouped = res.data.reduce((acc, item) => {
             acc[item.category] = acc[item.category] || [];
@@ -36,12 +39,22 @@ useEffect(() => {
         setMenuData(grouped);
     })
     .catch(console.error)
+     .finally(() => {
+        setLoading(false);
+    });
 }, [])
 
 //USE ID TO FIND AND UPDATE
 const getCartEntry = id => cartItems.find(ci =>( ci.item?._id|| ci.item) === id);
 const getQuantity = id => getCartEntry(id)?.quantity || 0;
 const displayItems = (menuData[activeCategory] || []).slice(0,4);
+if (loading) {
+  return (
+    <h1 style={{ color: "white", textAlign: "center", marginTop: "100px" }}>
+      Loading products...
+    </h1>
+  );
+}
 
     return (
         <div className=' bg-gradient-to-br from-[#1a120b] via-[#2a1e14] to-[#3e2b1d] min-h-screen py-16
@@ -91,15 +104,19 @@ const displayItems = (menuData[activeCategory] || []).slice(0,4);
                             border-amber-800/30 backdrop-blur-sm flex flex-col transition-all duration-500'
                             style={{'--index':i}}>
                                 <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10'>
-                                <img src={item.imageUrl} alt={item.name}
+                                <img 
+                                src={item.imageUrl?.startsWith("http") 
+                                ? item.imageUrl 
+                                : `${import.meta.env.VITE_BACKEND_URL}${item.imageUrl}`} 
+                                alt={item.name}
                                 className=' max-h-full max-w-full object-contain transition-all duration-700'/>
                                 </div>
 
 
                                 <div className=' p-4 sm:p-6 flex flex-col flex-grow'>
                                     <div className=' absolute top-0 left-1/2 -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent
-                                    via-amber-800/50 to-transaprent opacity-50 transition-all duration-300'/>
-                                    <h3 className=' text-xl sm:text-2xl mb-2 font-dancingscsript text-amber-100
+                                    via-amber-800/50 to-transparent opacity-50 transition-all duration-300'/>
+                                    <h3 className=' text-xl sm:text-2xl mb-2 font-dancingscript text-amber-100
                                     transition-colors'>
                                         {item.name}
                                     </h3>
