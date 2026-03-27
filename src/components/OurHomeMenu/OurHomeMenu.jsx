@@ -26,33 +26,46 @@ console.log(cartItems);
 const [menuData, setMenuData] = useState({});
 const [loading, setLoading] = useState(true);
 
+
 useEffect(() => {
-    const API_URL = import.meta.env.VITE_BACKEND_URL;   // 👈 ADD HERE (inside useEffect, top)
+  const fetchMenu = async () => {
+    try {
+      const API_URL = import.meta.env.VITE_BACKEND_URL || "https://plastibackend.onrender.com";
 
-    axios.get(`${API_URL}/api/items`)  
-    .then(res => {
-        const grouped = res.data.reduce((acc, item) => {
-            acc[item.category] = acc[item.category] || [];
-            acc[item.category].push(item);
-            return acc;
-        }, {})
-        setMenuData(grouped);
-    })
-    .catch(console.error)
-     .finally(() => {
-        setLoading(false);
-    });
-}, [])
+      // 🔥 wake up backend
+      await fetch(API_URL);
 
+      const res = await axios.get(`${API_URL}/api/items`);
+
+      const grouped = res.data.reduce((acc, item) => {
+        acc[item.category] = acc[item.category] || [];
+        acc[item.category].push(item);
+        return acc;
+      }, {});
+
+      setMenuData(grouped);
+
+    } catch (err) {
+      console.error("Retrying...", err);
+
+      setTimeout(fetchMenu, 2000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchMenu();
+}, []);
 //USE ID TO FIND AND UPDATE
 const getCartEntry = id => cartItems.find(ci =>( ci.item?._id|| ci.item) === id);
 const getQuantity = id => getCartEntry(id)?.quantity || 0;
 const displayItems = (menuData[activeCategory] || []).slice(0,4);
+
 if (loading) {
   return (
-    <h1 style={{ color: "white", textAlign: "center", marginTop: "100px" }}>
-      Loading products...
-    </h1>
+    <div style={{ color: "white", textAlign: "center", marginTop: "100px" }}>
+      Loading products... (Server waking up ⏳)
+    </div>
   );
 }
 
@@ -105,7 +118,7 @@ if (loading) {
                             style={{'--index':i}}>
                                 <div className='relative h-48 sm:h-56 md:h-60 flex items-center justify-center bg-black/10'>
                                 <img 
-                               src={item.imageUrl}
+                               src={item.imageUrl || "https://via.placeholder.com/150"}
   
                                 alt={item.name}
                                 className=' max-h-full max-w-full object-contain transition-all duration-700'
