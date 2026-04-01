@@ -223,7 +223,7 @@ if(error) return (
                                 <div key= {`${order._id}-${index}`}
                                 className=' flex items-center gap-3 p-2 bg-[#3a2b2b]/50 rounded-lg'>
                                 
-                                    <img src={`https://plastibackend.onrender.com${item.item.imageUrl}`} 
+                                    <img src={item.item.imageUrl} 
                                     alt={item.item.name} 
                                     className=' w-10 h-10 object-cover rounded-lg' />
 

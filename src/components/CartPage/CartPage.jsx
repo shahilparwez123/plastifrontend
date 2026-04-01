@@ -48,8 +48,10 @@ const CartPage = () => {
                                 transform hover: -translate-y-1 animate-fade-in'>
                                     <div className=' w-24 h-24 flex-shrink-0 cursor-pointer relative overflow-hidden
                                     rounded-lg transition-transform duration-300'
-                                    onClick={() => setSelectedImage(item.imageUrl? `${API_URL}${item.imageUrl}`: item?.image)}>
-                                        <img src={item.imageUrl ?`${API_URL}${item.imageUrl}`: item?.image} alt={item?.name || "product"} className=' w-full h-full
+                                    onClick={() => setSelectedImage(item.imageUrl || item?.image)}>
+                                        <img src={item.imageUrl || item?.image}  
+                                        alt={item?.name || "product"} 
+                                        className=' w-full h-full
                                         object-contain'/>
 
                                     </div>
