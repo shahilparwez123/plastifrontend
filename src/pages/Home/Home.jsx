@@ -13,6 +13,8 @@ const location = useLocation();
 const [showLogin, setShowLogin] = useState(false);
 
     useEffect(() => {
+
+      
   const params = new URLSearchParams(location.search);
 
   const token = params.get("token");
