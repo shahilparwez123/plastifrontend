@@ -32,7 +32,7 @@ useEffect(() => {
 
     setTimeout(() => {
         setShowToast({ visible: false, message: '', isError: false});
-        window.location.href = "/"
+    
         onLoginSuccess && onLoginSuccess(token); // optional
     }, 1500);
 }

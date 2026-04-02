@@ -28,7 +28,7 @@ const SignUp =() => {
         if(showToast.visible && showToast.message === 'Sign Up Successful') {
             const timer = setTimeout(() => {
                 setShowToast({visible: false, message: '', icon: null});
-                navigate('/login');
+                navigate('/?showLogin=true');
             }, 2000)
 
             return () => clearTimeout(timer);
